@@ -50,7 +50,7 @@ RULES:
         });
         if (claudeRes.ok) {
           const data = await claudeRes.json();
-          reaction = data.content?.[0]?.text || reaction;
+          reaction = (data.content?.[0]?.text || reaction).replace(/\*[^*]*\*/g, "").replace(/\s+/g, " ").trim();
         }
       } catch (e) {
         console.error("[REACT] Claude error:", e);

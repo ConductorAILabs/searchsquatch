@@ -111,6 +111,55 @@ function sendDIDMessage(text: string) {
   setTimeout(() => tryFind(0), 1000);
 }
 
+// ── ElevenLabs Agent: text-only WebSocket call from client ──
+// ElevenLabs Conversational AI Agent ID
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _ELEVEN_AGENT_ID = "agent_9401km8xzch0ekwt2w5c3h79xqt6";
+
+async function callElevenAgent(message: string): Promise<string> {
+  // Get signed URL from our server
+  const tokenRes = await fetch("/api/agent-token");
+  if (!tokenRes.ok) throw new Error("No token");
+  const { signedUrl } = await tokenRes.json();
+
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(signedUrl);
+    let responseCount = 0;
+    let sent = false;
+    let fullText = "";
+
+    const timeout = setTimeout(() => { ws.close(); resolve(fullText || ""); }, 20000);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: "conversation_initiation_client_data",
+        conversation_config_override: { conversation: { text_only: true } },
+      }));
+    };
+
+    ws.onmessage = (raw) => {
+      const msg = JSON.parse(raw.data);
+      if (msg.type === "agent_chat_response_part" && msg.text_response_part?.type === "delta" && sent) {
+        fullText += msg.text_response_part.text;
+      }
+      if (msg.type === "agent_response") {
+        responseCount++;
+        if (responseCount === 1 && !sent) {
+          sent = true;
+          setTimeout(() => ws.send(JSON.stringify({ type: "user_message", text: message })), 300);
+        } else if (responseCount === 2) {
+          fullText = msg.agent_response_event?.agent_response || fullText;
+          clearTimeout(timeout);
+          ws.close();
+          resolve(fullText.replace(/\*[^*]*\*/g, "").replace(/\s+/g, " ").trim());
+        }
+      }
+    };
+
+    ws.onerror = () => { clearTimeout(timeout); reject(new Error("ws error")); };
+  });
+}
+
 const SQUATCH_QUIPS = [
   "Booting up the forest computer...",
   "Warming up the pinecone processor...",
@@ -349,26 +398,59 @@ export default function Home() {
       if (sr.length === 0) { setStatus("NO RESULTS FOUND."); setTimeout(reset, 3500); return; }
       setAllResults(sr); setShownCount(0); setPage(0);
 
-      // ── 5. LOADING % — fetch ElevenLabs voice ──
+      // ── 5. LOADING — ElevenLabs Agent generates headline script via WebSocket ──
       setStatus("PROCESSING..."); setPhase("loading");
-      const speakPromise = fetch("/api/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: q, results: sr }) });
-      const speakRes = await speakPromise;
-      if (cancelRef.current) return;
+      const headlines = sr.slice(0, 4).map(r => r.title);
+      const agentPrompt = `Read these search headlines for "${q}": ${headlines.map((h, i) => `${i + 1}. "${h}"`).join(", ")}. Read each one with connectors like "first up", "next", "then". After reading them all, say ONE short funny sentence about the results. Keep it short. Never say the word Google.`;
 
-      if (speakRes.ok) {
-        const reactionText = decodeURIComponent(speakRes.headers.get("X-Reaction-Text") || "");
-        const blob = await speakRes.blob();
+      let agentScript = "";
+      try {
+        console.log("[AGENT] Calling ElevenLabs Agent...");
+        agentScript = await callElevenAgent(agentPrompt);
+        console.log("[AGENT] Got:", agentScript.substring(0, 80));
+      } catch (e) {
+        console.error("[AGENT] Failed:", e);
+      }
+
+      // Fallback to /api/speak if Agent fails
+      if (!agentScript) {
+        console.log("[AGENT] Falling back to /api/speak");
+        const speakRes = await fetch("/api/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: q, results: sr }) });
+        if (speakRes.ok) {
+          agentScript = decodeURIComponent(speakRes.headers.get("X-Reaction-Text") || "");
+          const blob = await speakRes.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          audioUrlRef.current = audioUrl;
+          const sentences = agentScript.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 0);
+          setCaptions(sentences); setCaptionIndex(0); setLoadProgress(100); setStatus(""); setPhase("revealing"); setShownCount(0);
+          const a = audioRef.current;
+          if (a) {
+            a.muted = false; a.volume = Math.min(volume * 1.2, 1); a.playbackRate = 0.85; a.src = audioUrl;
+            a.play().catch(console.error);
+            await new Promise<void>((res) => { a.onended = () => res(); setTimeout(res, 30000); });
+          }
+          if (cancelRef.current) return;
+          setCaptions([]); setCaptionIndex(-1);
+          setShownCount(PER_PAGE); setPhase("browse");
+          return; // done via fallback
+        }
+        setShownCount(PER_PAGE); setPhase("browse"); setStatus("");
+        return;
+      }
+
+      // ── 6. ElevenLabs TTS renders the Agent's script ──
+      if (cancelRef.current) return;
+      const ttsRes = await fetch("/api/say", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: agentScript }) });
+      if (ttsRes.ok) {
+        const blob = await ttsRes.blob();
         const audioUrl = URL.createObjectURL(blob);
         audioUrlRef.current = audioUrl;
-        const sentences = reactionText.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 0);
-
-        // ── 6. CRT — ElevenLabs voice reads headlines ──
+        const sentences = agentScript.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 0);
         setCaptions(sentences); setCaptionIndex(0); setLoadProgress(100); setStatus(""); setPhase("revealing"); setShownCount(0);
         const a = audioRef.current;
         if (a) {
           a.muted = false; a.volume = Math.min(volume * 1.2, 1); a.playbackRate = 0.85; a.src = audioUrl;
-          console.log("[AUDIO] Speak muted:", a.muted, "volume:", a.volume);
-          a.play().then(() => console.log("[AUDIO] Speak playing")).catch((e) => console.error("[AUDIO] Speak play failed:", e));
+          a.play().catch(console.error);
           await new Promise<void>((res) => { a.onended = () => res(); setTimeout(res, 30000); });
         }
         if (cancelRef.current) return;

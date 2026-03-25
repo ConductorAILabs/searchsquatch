@@ -73,30 +73,22 @@ export async function POST(req: NextRequest) {
           },
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
-            max_tokens: 400,
+            max_tokens: 120,
             messages: [{
               role: "user",
-              content: `You are Sasquatch — an 8-foot-tall bigfoot in a suit and tie who works as a search engine. You speak in third person sometimes, you're funny and grumpy but lovable, and you relate everything to forest life. You've been alive for 400 years.
+              content: `Sasquatch reads search headlines. User searched "${query}".
 
-A user searched for "${query}". Here are the top results:
 ${headlines.map((h: string, i: number) => `${i + 1}. "${h}"`).join("\n")}
 
-Write a script where you:
-1. Say a quick intro like "alright let Sasquatch read these" (vary it every time)
-2. Read EVERY headline with fun connectors between them (like "next up", "oh and check this", etc)
-3. End with a unique, funny roast/opinion about the results and the search topic. Make it specific to what the headlines say. Be creative and different every time.
+Read each headline with connectors like "first up", "next", "then", "and last". After all headlines, say ONE short funny sentence about the results. That's it.
 
-RULES:
-- NEVER say the word "Google" or any other search engine name
-- Keep it under 500 characters
-- Be funny and opinionated
-- Output ONLY the script text, nothing else`
+NEVER use asterisks, stage directions, or action descriptions. No *squints*, no *leans*, nothing in asterisks. Spoken words only. NEVER say "Google". Keep it tight. Output ONLY the script.`
             }],
           }),
         });
         if (claudeRes.ok) {
           const claudeData = await claudeRes.json();
-          script = claudeData.content?.[0]?.text || "";
+          script = (claudeData.content?.[0]?.text || "").replace(/\*[^*]*\*/g, "").replace(/\s+/g, " ").trim();
         }
       } catch (e) {
         console.error("[SPEAK] Claude error:", e);

@@ -1,91 +1,94 @@
 # SEARCHSQUATCH
 
-### The World's First Cryptid-Powered Search Engine
+### The Internet's Only Cryptid-Powered Search Engine
 
 ---
 
-**What if Google had a personality? What if that personality was a 7-foot-tall, forest-dwelling Sasquatch who just discovered the internet?**
+**What if search had a personality? What if that personality was an 8-foot-tall, suit-wearing Sasquatch who's been alive for 400 years and just discovered the internet?**
 
-SearchSquatch is a live, real-time search engine where a fully animated Sasquatch character reads your search results out loud — and gives you his unfiltered, hilarious opinion on every headline.
+SearchSquatch is a cinematic, character-driven search engine where a fully voiced and animated Sasquatch reacts to your search query, reads every headline out loud, roasts the results, and lets you browse — all in real-time. You can also talk to him directly through a live AI avatar.
+
+In the future, every business, brand, and celebrity will interact with consumers and fans in this format. SearchSquatch is the proof of concept.
 
 ---
 
 ## THE EXPERIENCE
 
-You type a query. The words appear letter-by-letter on a glowing green CRT monitor — like a retro computer terminal straight out of 1983. The screen holds. Dramatic pause.
+You type a query. A loading screen boots up on a retro CRT monitor — the forest mainframe is warming up.
 
-**CUT TO:** Sasquatch. Sitting at his desk. Surrounded by vintage computers in his forest bunker. He's been waiting for this.
+**CUT TO:** Sasquatch. Sitting at his desk. Suit. Tie. Keyboard under those massive paws. He reacts to what you searched.
 
-**CUT BACK:** The CRT. Results start appearing. Real results. Live data. Actual links you can click.
+**CUT BACK:** The CRT. Results start appearing. Real results. Live data. Actual links.
 
-Then the magic happens.
+Then Sasquatch starts talking. Claude generates a custom reaction to your specific query. ElevenLabs renders it in a deep, gravelly, custom-cloned Sasquatch voice. Movie-style captions scroll across the bottom.
 
-**Sasquatch starts talking.**
+He reads every headline. He drops a one-liner roast. He's done. You browse.
 
-In a deep, gravelly, crunchy voice, he reads every headline out loud — then drops his take. His opinion. From the perspective of a creature who's lived in the woods for 400 years and just figured out what WiFi is.
+**CUT TO:** Sasquatch again. He's got opinions about what you just found.
 
-Movie-style captions scroll across the bottom. You're watching a Sasquatch react to the internet in real time.
+**CUT BACK:** Results on the CRT. Click anything. Paginate. Search again. He's ready when you are.
 
-When he's done? The CRT stays live. Click any result. Browse pages. Search again. He's ready when you are.
+Want to talk to him directly? Click "Start a Conversation" — a live D-ID avatar responds in real-time with lip sync and voice.
 
 ---
 
 ## THE TECH
 
-This isn't a gimmick with canned responses. This is a **real-time AI pipeline** stitching together four cutting-edge APIs in a single seamless experience:
+This is a **real-time AI pipeline** stitching together six cutting-edge APIs in a single cinematic experience:
 
 | Layer | Tech | What It Does |
 |-------|------|-------------|
-| **Search** | Firecrawl API | Live web search — real results, real links, real data. Up to 40 results cached across 10 pages. |
-| **Brain** | Claude API (Anthropic) | Generates Sasquatch's contextual commentary. He actually understands the headlines. Every reaction is unique, funny, and relevant. |
-| **Voice** | ElevenLabs TTS | Converts Sasquatch's script into deep, gravelly speech using a tuned "Husky Trickster" voice model with maxed-out expressiveness. |
-| **Frontend** | Next.js 14 + React | Cinematic UI with typewriter effects, video switching, timed result reveals synced to audio, movie captions, pagination, mute controls. |
+| **Search** | Firecrawl API | Live web search — real results, real links. Up to 40 results cached across 10 pages. |
+| **Brain** | Claude API (Anthropic) | Generates Sasquatch's custom roast for each search query. Every reaction is unique and specific to the headlines. |
+| **Personality** | ElevenLabs Agents | Conversational AI via WebSocket generates the headline reading script with Sasquatch's personality baked in. |
+| **Voice** | ElevenLabs TTS | Custom cloned Sasquatch voice renders every script in real-time. Deep, grumbly, full of character. |
+| **Atmosphere** | ElevenLabs Sound Effects | AI-generated ambient office sounds and typing effects for the cinematic atmosphere. |
+| **Avatar** | D-ID | Live conversational AI avatar with lip sync — talk to Sasquatch directly, ask him anything. Connected to Firecrawl as a tool. |
+| **Frontend** | Next.js 14 + Netlify | Cinematic UI with video transitions, timed result reveals, movie captions, audio controls, CRT terminal display. |
 
-The whole pipeline — search, AI reaction, voice synthesis — fires in parallel behind a fake loading screen. By the time the progress bar hits 100%, everything is ready. Results reveal one by one, timed to his narration. It feels like a show because it IS a show.
+The whole pipeline fires in parallel. Search, AI reaction, voice synthesis, and avatar all kick off simultaneously behind the loading screen. By the time you see results, everything is ready. It feels like a show because it IS a show.
 
 ---
 
 ## THE CHARACTER
 
-Sasquatch speaks in third person. He relates everything back to forest life. He's opinionated. He's lovable. He's family-friendly (we built a hardened content filter with unicode normalization, leetspeak detection, and phrase matching — this guy stays clean).
+Sasquatch speaks in third person. He relates everything to forest life. He's opinionated, grumpy, lovable, and family-friendly (hardened content filter with unicode normalization, leetspeak detection, and phrase matching).
 
-> *"Let's see what we got here... 'NASA Discovers New Exoplanet in Habitable Zone.' Sasquatch been saying there's other forests out there for years. Nobody listens to Sasquatch."*
-
-> *"'Apple Announces New MacBook Pro.' Sasquatch prefer real apples. But Sasquatch respects the hustle."*
-
-Every search is different. Every reaction is generated live by Claude. You'll never get the same Sasquatch twice.
+Every search is different. Every reaction is generated live by Claude and ElevenLabs. You'll never get the same Sasquatch twice.
 
 ---
 
 ## THE DESIGN
 
-- **Idle screen:** Sasquatch at his desk, waiting. A clean, minimal search bar floats over the scene. No clutter. Just vibes.
-- **CRT screen:** A close-up of a retro green phosphor monitor. Black text on glowing green. The "SearchSquatch" logo in pixel font. Results right-aligned like a terminal.
-- **Transitions:** Cinematic cuts between Sasquatch and his monitor. Typewriter effects. Timed reveals. Movie captions. Audio activity bars.
-- **Built for mobile.** Responsive down to 480px. Works everywhere Sasquatch gets signal.
+- **Idle screen:** D-ID Sasquatch avatar — live, animated, ready to talk. Search bar floating over the scene.
+- **CRT screen:** Retro green phosphor monitor. Black text on glowing green. Terminal-style results.
+- **Cutback clips:** Cinematic cuts to Sasquatch at his desk between search phases.
+- **Transitions:** Hard cuts, no fades. Loading screen, typing clip, search results, avatar reactions — all timed and sequenced.
+- **Responsive.** Works on desktop and mobile.
 
 ---
 
 ## THE SECURITY
 
-Yeah, we locked it down. This Sasquatch doesn't mess around:
-
-- Rate limited: 3 searches/minute, 8 per 5 minutes
-- Hardened content filter with unicode/leetspeak/spacing bypass protection
-- Prompt injection defense on all AI inputs
-- Input length caps, result sanitization, zero error detail leakage
+- Rate limited across all endpoints (generous but protected)
+- Content filter on all user input and TTS output
+- API keys in environment variables, never in source code
+- CORS restricted on agent endpoints
 - Full security headers (XSS, clickjacking, MIME sniffing protection)
+- Input length caps, result sanitization
 
 ---
 
-## THE PITCH
+## THE VISION
 
-SearchSquatch isn't just a search engine. It's a **character-driven, AI-powered entertainment experience** disguised as a utility.
+SearchSquatch isn't just a search engine. It's a **character-driven, AI-powered interactive format** that transforms how people consume information.
 
-It's the answer to the question nobody asked: *"What if search results were fun?"*
+Every brand wants engagement. Every celebrity wants a deeper connection with fans. Every business wants their customers to actually enjoy the experience. This is the format that delivers it — a personality-first, voice-powered, cinematic interaction built on ElevenLabs, Firecrawl, D-ID, and Claude.
 
-It's a tech demo that makes people laugh. A hackathon project that makes people lean in. A proof of concept that four APIs, one cryptid, and a green CRT monitor can create something genuinely delightful.
+SearchSquatch is the first. It won't be the last.
 
-**SearchSquatch. He searches. He reads. He reacts.**
+---
 
-*And he accepts payment in berries and fish.*
+**Live demo:** [searchsquatch.netlify.app](https://searchsquatch.netlify.app)
+
+**Built by** [Conductor Labs](https://conductorailabs.com) — From Problem to Prototype.
